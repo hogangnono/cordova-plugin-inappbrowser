@@ -87,6 +87,11 @@ public class InAppBrowser extends CordovaPlugin {
     private static final String CLEAR_SESSION_CACHE = "clearsessioncache";
     private static final String HARDWARE_BACK_BUTTON = "hardwareback";
     private static final String MEDIA_PLAYBACK_REQUIRES_USER_ACTION = "mediaPlaybackRequiresUserAction";
+    private static final String INTENT_PROTOCOL_START = "intent:";
+    private static final String INTENT_PROTOCOL_INTENT = "#Intent;";
+    private static final String INTENT_PROTOCOL_END = ";end;";
+    private static final String GOOGLE_PLAY_STORE_PREFIX = "market://details?id=";
+    private static final String HOGANGNONO_SCHEME = "hogangnono://";
 
     private InAppBrowserDialog dialog;
     private WebView inAppWebView;
@@ -839,6 +844,38 @@ public class InAppBrowser extends CordovaPlugin {
                     return true;
                 } catch (android.content.ActivityNotFoundException e) {
                     LOG.e(LOG_TAG, "Error sending sms " + url + ":" + e.toString());
+                }
+            }
+            // Support hogangnono scheme
+            else if (url.startsWith(HOGANGNONO_SCHEME)) {
+                final String customUrl = url.substring(HOGANGNONO_SCHEME.length(), url.length());
+
+                try {
+                    cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(customUrl)));
+                } catch (ActivityNotFoundException e) {
+                    cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_STORE_PREFIX + "com.hogangnono.hogangnono")));
+                }
+                return true;
+            }
+            // Supports Intent:// scheme. It usually used on above 4 version.
+            else if (url.startsWith(INTENT_PROTOCOL_START)) {
+                final int customUrlStartIndex = INTENT_PROTOCOL_START.length();
+                final int customUrlEndIndex = url.indexOf(INTENT_PROTOCOL_INTENT);
+                
+                if (customUrlEndIndex < 0) {
+                    return false;
+                } else {
+                    final String customUrl = url.substring(customUrlStartIndex, customUrlEndIndex);
+                    
+                    try {
+                        cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(customUrl)));
+                    } catch (ActivityNotFoundException e) {
+                        final int packageStartIndex = customUrlEndIndex + INTENT_PROTOCOL_INTENT.length();
+                        final int packageEndIndex = url.indexOf(INTENT_PROTOCOL_END);
+                        final String packageName = url.substring(packageStartIndex, packageEndIndex < 0 ? url.length() : packageEndIndex).replace("package=", "");
+                        cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_STORE_PREFIX + packageName)));
+                    }
+                    return true;
                 }
             }
             return false;
