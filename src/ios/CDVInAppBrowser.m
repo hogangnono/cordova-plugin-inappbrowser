@@ -545,6 +545,7 @@
     [self.navigationController.navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsDefault];
     self.navigationController.navigationBar.barTintColor = [self colorFromHexString:@"#5058A6"];
     
+    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     UIBarButtonItem* fixedSpaceButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
     fixedSpaceButton.width = 30;
     
@@ -600,7 +601,8 @@
     self.spinner.userInteractionEnabled = NO;
     [self.spinner stopAnimating];
 
-    self.closeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(close)];
+    self.closeButton = [[UIBarButtonItem alloc] initWithTitle:@"닫기" style:UIBarButtonItemStylePlain target:self action:@selector(close)];
+    self.closeButton.tintColor = [UIColor whiteColor];
     self.closeButton.enabled = YES;
 
     NSString* frontArrowString = NSLocalizedString(@"►", nil); // create arrow from Unicode char
