@@ -543,7 +543,9 @@
     UIImage *image = [UIImage new];
     self.navigationController.navigationBar.shadowImage = image;
     [self.navigationController.navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsDefault];
-    self.navigationController.navigationBar.barTintColor = [self colorFromHexString:@"#5058A6"];
+    if (_browserOptions.toolbarcolor != nil) {
+        self.navigationController.navigationBar.barTintColor = [self colorFromHexString:_browserOptions.toolbarcolor];
+    }
     
     self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
     UIBarButtonItem* fixedSpaceButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
