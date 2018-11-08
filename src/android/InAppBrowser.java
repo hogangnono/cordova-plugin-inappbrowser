@@ -574,7 +574,7 @@ public class InAppBrowser extends CordovaPlugin {
             }
             Boolean wideViewPort = features.get(USER_WIDE_VIEW_PORT);
             if (wideViewPort != null ) {
-		            useWideViewPort = wideViewPort.booleanValue();
+                    useWideViewPort = wideViewPort.booleanValue();
             }
         }
 
@@ -618,7 +618,7 @@ public class InAppBrowser extends CordovaPlugin {
                 // Toolbar layout
                 RelativeLayout toolbar = new RelativeLayout(cordova.getActivity());
                 //Please, no more black!
-                toolbar.setBackgroundColor(android.graphics.Color.LTGRAY);
+                toolbar.setBackgroundColor(android.graphics.Color.rgb(79, 87, 172));
                 toolbar.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, this.dpToPixels(44)));
                 toolbar.setPadding(this.dpToPixels(2), this.dpToPixels(2), this.dpToPixels(2), this.dpToPixels(2));
                 toolbar.setHorizontalGravity(Gravity.LEFT);
@@ -689,11 +689,16 @@ public class InAppBrowser extends CordovaPlugin {
                 textLayoutParams.addRule(RelativeLayout.LEFT_OF, 5);
                 edittext.setLayoutParams(textLayoutParams);
                 edittext.setId(Integer.valueOf(4));
-                edittext.setSingleLine(true);
+
+                edittext.setEnabled(false);
                 edittext.setText(url);
                 edittext.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
                 edittext.setImeOptions(EditorInfo.IME_ACTION_GO);
                 edittext.setInputType(InputType.TYPE_NULL); // Will not except input... Makes the text NON-EDITABLE
+                edittext.setTextSize(15);
+                edittext.setTextColor(android.graphics.Color.argb(150, 255,255,255));
+                edittext.setBackgroundColor(android.graphics.Color.argb(0,0,0,0));
+                edittext.setPadding(0, this.dpToPixels(10), this.dpToPixels(8), this.dpToPixels(10));
                 edittext.setOnKeyListener(new View.OnKeyListener() {
                     public boolean onKey(View v, int keyCode, KeyEvent event) {
                         // If the event is a key-down event on the "enter" button
@@ -705,22 +710,32 @@ public class InAppBrowser extends CordovaPlugin {
                     }
                 });
 
+                // Action Button Container layout
+                RelativeLayout closeButtonContainer = new RelativeLayout(cordova.getActivity());
+                RelativeLayout.LayoutParams containerLayoutParmas = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                containerLayoutParmas.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                closeButtonContainer.setLayoutParams(containerLayoutParmas);
+                closeButtonContainer.setHorizontalGravity(Gravity.RIGHT);
+                closeButtonContainer.setVerticalGravity(Gravity.CENTER_VERTICAL);
+                closeButtonContainer.setId(Integer.valueOf(5));
+
                 // Close/Done button
                 ImageButton close = new ImageButton(cordova.getActivity());
                 RelativeLayout.LayoutParams closeLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
-                closeLayoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                closeLayoutParams.addRule(RelativeLayout.RIGHT_OF, 8);
                 close.setLayoutParams(closeLayoutParams);
                 close.setContentDescription("Close Button");
-                close.setId(Integer.valueOf(5));
+                close.setId(Integer.valueOf(7));
                 int closeResId = activityRes.getIdentifier("ic_action_remove", "drawable", cordova.getActivity().getPackageName());
                 Drawable closeIcon = activityRes.getDrawable(closeResId);
+                close.setPadding(0, this.dpToPixels(10), 0, this.dpToPixels(10));
                 if (Build.VERSION.SDK_INT >= 16)
                     close.setBackground(null);
                 else
                     close.setBackgroundDrawable(null);
                 close.setImageDrawable(closeIcon);
                 close.setScaleType(ImageView.ScaleType.FIT_CENTER);
-                back.setPadding(0, this.dpToPixels(10), 0, this.dpToPixels(10));
+
                 if (Build.VERSION.SDK_INT >= 16)
                     close.getAdjustViewBounds();
 
@@ -730,6 +745,39 @@ public class InAppBrowser extends CordovaPlugin {
                     }
                 });
 
+                // Share button
+                ImageButton share = new ImageButton(cordova.getActivity());
+                RelativeLayout.LayoutParams shareLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
+                shareLayoutParams.addRule(RelativeLayout.ALIGN_LEFT);
+                share.setLayoutParams(shareLayoutParams);
+                share.setContentDescription("Share Button");
+                share.setId(Integer.valueOf(8));
+                int shareResId = activityRes.getIdentifier("ic_action_share", "drawable", cordova.getActivity().getPackageName());
+                Drawable shareIcon = activityRes.getDrawable(shareResId);
+                share.setPadding(5, this.dpToPixels(10), 5, this.dpToPixels(10));
+                if (Build.VERSION.SDK_INT >= 16)
+                    share.setBackground(null);
+                else
+                    share.setBackgroundDrawable(null);
+                share.setImageDrawable(shareIcon);
+                share.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                if (Build.VERSION.SDK_INT >= 16)
+                    share.getAdjustViewBounds();
+
+                share.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                        sharingIntent.setType("text/plain");
+                        String shareBody = inAppWebView.getUrl();
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, inAppWebView.getUrl());
+                        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+
+                        cordova.getActivity().startActivity(Intent.createChooser(sharingIntent, "URL 공유"));
+                    }
+                });
+
+                closeButtonContainer.addView(close);
+                closeButtonContainer.addView(share);
                 // WebView
                 inAppWebView = new WebView(cordova.getActivity());
                 inAppWebView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
@@ -834,7 +882,9 @@ public class InAppBrowser extends CordovaPlugin {
                 // Add the views to our toolbar
                 toolbar.addView(actionButtonContainer);
                 toolbar.addView(edittext);
-                toolbar.addView(close);
+                toolbar.addView(closeButtonContainer);
+
+
 
                 // Don't add the toolbar if its been disabled
                 if (getShowLocationBar()) {
