@@ -6,9 +6,9 @@
  to you under the Apache License, Version 2.0 (the
  "License"); you may not use this file except in compliance
  with the License.  You may obtain a copy of the License at
- 
+
  http://www.apache.org/licenses/LICENSE-2.0
- 
+
  Unless required by applicable law or agreed to in writing,
  software distributed under the License is distributed on an
  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -17,19 +17,16 @@
  under the License.
  */
 
-#import <Cordova/CDVPlugin.h>
-#import <Cordova/CDVInvokedUrlCommand.h>
+#import <WebKit/WebKit.h>
 
-@interface CDVInAppBrowser : CDVPlugin {}
+@interface CDVWKInAppBrowserUIDelegate : NSObject <WKUIDelegate>{
+    @private
+    UIViewController* _viewController;
+}
 
-@property (nonatomic, assign) BOOL wkwebviewavailable;
-@property (nonatomic, assign) BOOL usewkwebview;
+@property (nonatomic, copy) NSString* title;
 
-- (void)open:(CDVInvokedUrlCommand*)command;
-- (void)close:(CDVInvokedUrlCommand*)command;
-- (void)injectScriptCode:(CDVInvokedUrlCommand*)command;
-- (void)show:(CDVInvokedUrlCommand*)command;
-- (void)hide:(CDVInvokedUrlCommand*)command;
-- (void)loadAfterBeforeload:(CDVInvokedUrlCommand*)command;
+- (instancetype)initWithTitle:(NSString*)title;
+-(void) setViewController:(UIViewController*) viewController;
 
 @end
