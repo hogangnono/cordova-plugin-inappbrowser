@@ -81,3 +81,6 @@
 - (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent browserOptions:(CDVInAppBrowserOptions*) browserOptions;
 - (id)createNavigationViewContoller;
 @end
+
+@interface CDWKEmptyViewController: UIViewController
+@end

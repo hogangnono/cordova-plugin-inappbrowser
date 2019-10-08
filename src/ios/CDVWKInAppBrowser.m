@@ -323,8 +323,7 @@ static CDVWKInAppBrowser* instance = nil;
                 }
                 strongSelf->tmpWindow = [[UIWindow alloc] initWithFrame:frame];
             }
-            UIViewController *tmpController = [[UIViewController alloc] init];
-
+            CDWKEmptyViewController *tmpController = [[CDWKEmptyViewController alloc] init];
             [strongSelf->tmpWindow setRootViewController:tmpController];
             [strongSelf->tmpWindow setWindowLevel:UIWindowLevelNormal];
 
@@ -812,7 +811,7 @@ BOOL isExiting = FALSE;
     self.spinner.userInteractionEnabled = NO;
     [self.spinner stopAnimating];
 
-    self.closeButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(close)];
+    self.closeButton = [[UIBarButtonItem alloc] initWithTitle:@"닫기" style:UIBarButtonItemStylePlain target:self action:@selector(close)];
     self.closeButton.enabled = YES;
     if (_browserOptions.navigationbuttoncolor != nil) { // Set button color if user sets it in options
       self.closeButton.tintColor = [self colorFromHexString:_browserOptions.navigationbuttoncolor];
@@ -1042,11 +1041,11 @@ BOOL isExiting = FALSE;
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    return UIStatusBarStyleDefault;
+    return UIStatusBarStyleLightContent;
 }
 
 - (BOOL)prefersStatusBarHidden {
-    return NO;
+    return YES;
 }
 
 - (void)close
@@ -1126,7 +1125,8 @@ BOOL isExiting = FALSE;
 //        viewBounds.origin.y = STATUSBAR_HEIGHT;
 //        viewBounds.size.height = viewBounds.size.height - STATUSBAR_HEIGHT;
 //        self.webView.frame = viewBounds;
-//        [[UIApplication sharedApplication] setStatusBarStyle:[self preferredStatusBarStyle]];
+        [self setNeedsStatusBarAppearanceUpdate];
+        [[UIApplication sharedApplication] setStatusBarStyle:[self preferredStatusBarStyle]];
     }
     [self rePositionViews];
     [self.navigationController setNavigationBarHidden:NO animated:animated];
@@ -1290,3 +1290,24 @@ BOOL isExiting = FALSE;
 
 
 @end //CDVWKInAppBrowserViewController
+
+@implementation CDWKEmptyViewController
+
+- (BOOL)prefersStatusBarHidden {
+    if (@available(iOS 11.0, *)) {
+        UIWindow *mainWindow = [[[UIApplication sharedApplication] delegate] window];
+        if (mainWindow.safeAreaInsets.top > 24.0) {
+            return NO;
+        } else {
+            return YES;
+        }
+    } else {
+        return YES;
+    }
+}
+
+- (UIStatusBarStyle)preferredStatusBarStyle {
+    return UIStatusBarStyleLightContent;
+}
+
+@end
