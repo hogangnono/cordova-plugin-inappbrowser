@@ -12,7 +12,7 @@
 @implementation SVWebViewControllerActivitySafari
 
 - (NSString *)activityTitle {
-	return NSLocalizedStringFromTable(@"Open in Safari", @"SVWebViewController", nil);
+	return @"Safari에서 보기";
 }
 
 - (BOOL)canPerformWithActivityItems:(NSArray *)activityItems {

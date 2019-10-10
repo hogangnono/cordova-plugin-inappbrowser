@@ -74,12 +74,12 @@
 
 - (void)close;
 - (void)navigateTo:(NSURL*)url;
-- (void)showLocationBar:(BOOL)show;
-- (void)showToolBar:(BOOL)show : (NSString *) toolbarPosition;
 - (void)setCloseButtonTitle:(NSString*)title : (NSString*) colorString : (int) buttonIndex;
+- (void)updateViews:(CDVInAppBrowserOptions*)browserOptions;
 
-- (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent browserOptions:(CDVInAppBrowserOptions*) browserOptions;
+- (id)initWithUserAgent:(NSString*)userAgent prevUserAgent:(NSString*)prevUserAgent browserOptions:(CDVInAppBrowserOptions*)browserOptions;
 - (id)createNavigationViewContoller;
+
 @end
 
 @interface CDWKEmptyViewController: UIViewController

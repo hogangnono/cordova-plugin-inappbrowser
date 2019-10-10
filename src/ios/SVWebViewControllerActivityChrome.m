@@ -11,7 +11,7 @@
 @implementation SVWebViewControllerActivityChrome
 
 - (NSString *)activityTitle {
-	return NSLocalizedStringFromTable(@"Open in Chrome", @"SVWebViewController", nil);
+	return @"Chrome에서 보기";
 }
 
 - (BOOL)canPerformWithActivityItems:(NSArray *)activityItems {
