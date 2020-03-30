@@ -937,6 +937,12 @@ public class InAppBrowser extends CordovaPlugin {
                 if (Build.VERSION.SDK_INT >= 16)
                     close.getAdjustViewBounds();
 
+                close.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        closeDialog();
+                    }
+                });
 
                 // Share button
                 ImageButton share = new ImageButton(cordova.getActivity());
@@ -1093,8 +1099,6 @@ public class InAppBrowser extends CordovaPlugin {
                 toolbar.addView(edittext);
                 toolbar.addView(closeButtonContainer);
 
-
-
                 // Don't add the toolbar if its been disabled
                 if (getShowLocationBar()) {
                     // Add our toolbar to our main view/layout
@@ -1105,11 +1109,6 @@ public class InAppBrowser extends CordovaPlugin {
                 RelativeLayout webViewLayout = new RelativeLayout(cordova.getActivity());
                 webViewLayout.addView(inAppWebView);
                 main.addView(webViewLayout);
-
-                // Don't add the footer unless it's been enabled
-                if (showFooter) {
-                    webViewLayout.addView(footer);
-                }
 
                 WindowManager.LayoutParams lp = new WindowManager.LayoutParams();
                 lp.copyFrom(dialog.getWindow().getAttributes());
@@ -1358,12 +1357,12 @@ public class InAppBrowser extends CordovaPlugin {
             else if (url.startsWith(INTENT_PROTOCOL_START)) {
                 final int customUrlStartIndex = INTENT_PROTOCOL_START.length();
                 final int customUrlEndIndex = url.indexOf(INTENT_PROTOCOL_INTENT);
-                
+
                 if (customUrlEndIndex < 0) {
                     return false;
                 } else {
                     final String customUrl = url.substring(customUrlStartIndex, customUrlEndIndex);
-                    
+
                     try {
                         cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(customUrl)));
                     } catch (ActivityNotFoundException e) {
