@@ -1283,7 +1283,7 @@ public class InAppBrowser extends CordovaPlugin {
                     LOG.e(LOG_TAG, "Error dialing " + url + ": " + e.toString());
                 }
                  // [hogangnono] Make to install when use doesn't have app
-            } else if (url.startsWith("geo:") || url.startsWith(WebView.SCHEME_MAILTO) || url.startsWith("market:") || url.startsWith("intent:")) {
+            } else if (url.startsWith("geo:") || url.startsWith(WebView.SCHEME_MAILTO) || url.startsWith("market:")) {
                 try {
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.setData(Uri.parse(url));
@@ -1348,6 +1348,10 @@ public class InAppBrowser extends CordovaPlugin {
                     try {
                         cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(customUrl)));
                     } catch (ActivityNotFoundException e) {
+                        if (url.contains("kakaolink://send")) {
+                            cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_STORE_PREFIX + "com.kakao.talk")));
+                            return true;
+                        }
                         final int packageStartIndex = customUrlEndIndex + INTENT_PROTOCOL_INTENT.length();
                         final int packageEndIndex = url.indexOf(INTENT_PROTOCOL_END);
                         final String packageName = url.substring(packageStartIndex, packageEndIndex < 0 ? url.length() : packageEndIndex).replace("package=", "");
