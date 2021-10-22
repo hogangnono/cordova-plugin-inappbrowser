@@ -18,6 +18,7 @@
 */
 package org.apache.cordova.inappbrowser;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
@@ -48,6 +49,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.CookieManager;
 import android.webkit.HttpAuthHandler;
 import android.webkit.JavascriptInterface;
+import android.webkit.PermissionRequest;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -70,6 +72,7 @@ import org.apache.cordova.CordovaHttpAuthHandler;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.LOG;
+import org.apache.cordova.PermissionHelper;
 import org.apache.cordova.PluginManager;
 import org.apache.cordova.PluginResult;
 import org.json.JSONException;
@@ -122,6 +125,8 @@ public class InAppBrowser extends CordovaPlugin {
     private static final String FOOTER_COLOR = "footercolor";
     private static final String BEFORELOAD = "beforeload";
     private static final String FULLSCREEN = "fullscreen";
+    private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 101;
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 102;
 
     private static final List customizableOptions = Arrays.asList(CLOSE_BUTTON_CAPTION, TOOLBAR_COLOR, NAVIGATION_COLOR, CLOSE_BUTTON_COLOR, FOOTER_COLOR);
 
@@ -153,6 +158,7 @@ public class InAppBrowser extends CordovaPlugin {
     private boolean fullscreen = true;
     private String[] allowedSchemes;
     private InAppBrowserClient currentClient;
+    private PermissionRequest myRequest;
 
     /**
      * Executes the request and returns PluginResult.
@@ -977,11 +983,11 @@ public class InAppBrowser extends CordovaPlugin {
                         String shareBody = inAppWebView.getUrl();
                         sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, inAppWebView.getUrl());
                         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
-                        
+
                         cordova.getActivity().startActivity(Intent.createChooser(sharingIntent, "URL 공유"));
                     }
                 });
-                
+
                 RelativeLayout.LayoutParams closeLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
                 closeLayoutParams.addRule(RelativeLayout.RIGHT_OF, shareButtonId);
                 closeButton.setLayoutParams(closeLayoutParams);
@@ -989,7 +995,7 @@ public class InAppBrowser extends CordovaPlugin {
                 RelativeLayout.LayoutParams shareLayoutParams = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.MATCH_PARENT);
                 shareLayoutParams.addRule(RelativeLayout.ALIGN_LEFT);
                 shareButton.setLayoutParams(shareLayoutParams);
-                    
+
                 customButtonContainer.addView((View)closeButton);
                 customButtonContainer.addView((View)shareButton);
 
@@ -1016,6 +1022,18 @@ public class InAppBrowser extends CordovaPlugin {
                         // Run cordova startActivityForResult
                         cordova.startActivityForResult(InAppBrowser.this, Intent.createChooser(content, "Select File"), FILECHOOSER_REQUESTCODE);
                         return true;
+                    }
+
+                    @Override
+                    public void onPermissionRequest(PermissionRequest request) {
+                        myRequest = request;
+                        for (String permission : request.getResources()) {
+                            if (permission.equals("android.webkit.resource.AUDIO_CAPTURE")) {
+                                askForPermission(Manifest.permission.RECORD_AUDIO, MY_PERMISSIONS_REQUEST_RECORD_AUDIO);
+                            } else if (permission.equals("android.webkit.resource.VIDEO_CAPTURE")) {
+                                askForPermission(Manifest.permission.CAMERA, MY_PERMISSIONS_REQUEST_CAMERA);
+                            }
+                        }
                     }
                 });
                 currentClient = new InAppBrowserClient(thatWebView, edittext, beforeload);
@@ -1127,6 +1145,40 @@ public class InAppBrowser extends CordovaPlugin {
         };
         this.cordova.getActivity().runOnUiThread(runnable);
         return "";
+    }
+
+    /**
+     * WebView에서 권한이 필요할 시에 확인하는 로직
+     *
+     * @param permission 요청하는 권한
+     * @param requestCode 내부적으로 정의한 코드
+     */
+    public void askForPermission(String permission, int requestCode) {
+        if (!PermissionHelper.hasPermission(this, permission)) {
+            PermissionHelper.requestPermission(this, requestCode, permission);
+        } else {
+            myRequest.grant(myRequest.getResources());
+        }
+    }
+
+    /**
+     * 권한 요청 결과가 반환되는 콜백
+     *
+     * @param requestCode 요청시 넣어줬던 코드
+     * @param permissions 요청했던 권한
+     * @param grantResults 권환 획득 여부
+     */
+    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
+        for (int r : grantResults) {
+            if (r == PackageManager.PERMISSION_DENIED) {
+                myRequest.deny();
+                return;
+            }
+        }
+
+        if (requestCode == MY_PERMISSIONS_REQUEST_RECORD_AUDIO || requestCode == MY_PERMISSIONS_REQUEST_CAMERA) {
+            myRequest.grant(myRequest.getResources());
+        }
     }
 
     /**
@@ -1339,12 +1391,12 @@ public class InAppBrowser extends CordovaPlugin {
             else if (url.startsWith(INTENT_PROTOCOL_START)) {
                 final int customUrlStartIndex = INTENT_PROTOCOL_START.length();
                 final int customUrlEndIndex = url.indexOf(INTENT_PROTOCOL_INTENT);
-                
+
                 if (customUrlEndIndex < 0) {
                     return false;
                 } else {
                     final String customUrl = url.substring(customUrlStartIndex, customUrlEndIndex);
-                    
+
                     try {
                         cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(customUrl)));
                     } catch (ActivityNotFoundException e) {
