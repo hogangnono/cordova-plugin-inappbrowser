@@ -960,16 +960,30 @@ BOOL isExiting = FALSE;
     CDVInAppBrowserNavigationController *nav = [[CDVInAppBrowserNavigationController alloc] initWithRootViewController:self];
     nav.orientationDelegate = self;
     nav.navigationBarHidden = NO;
+    nav.modalPresentationStyle = self.modalPresentationStyle;
+    nav.presentationController.delegate = self;
+
+    // navigationBar background color 
+    if (_browserOptions.toolbarcolor != nil) {
+        if (@available(iOS 15.0, *)) {
+            UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
+            [appearance configureWithOpaqueBackground];
+            appearance.backgroundColor = [self colorFromHexString:_browserOptions.toolbarcolor];
+            nav.navigationBar.standardAppearance = appearance;
+            nav.navigationBar.scrollEdgeAppearance = appearance;
+        }else{
+            nav.navigationBar.barTintColor = [self colorFromHexString:_browserOptions.toolbarcolor];
+        }
+    }
+    
+    // navigationBar setting
     nav.navigationBar.translucent = NO;
     UIImage *image = [UIImage new];
     nav.navigationBar.shadowImage = image;
     [nav.navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsDefault];
     
-    if (_browserOptions.toolbarcolor != nil) {
-        nav.navigationBar.barTintColor = [self colorFromHexString:_browserOptions.toolbarcolor];
-    }
-    nav.modalPresentationStyle = self.modalPresentationStyle;
-    nav.presentationController.delegate = self;
+    nav.navigationBar.tintColor = [UIColor whiteColor];
+    nav.navigationBar.titleTextAttributes = @{NSFontAttributeName: [UIFont systemFontOfSize:14], NSForegroundColorAttributeName: [UIColor colorWithWhite:1.0 alpha:0.45]};
     
     return nav;
 }
@@ -1239,15 +1253,7 @@ BOOL isExiting = FALSE;
     //     [self.toolbar setFrame:CGRectMake(self.toolbar.frame.origin.x, [self getStatusBarOffset], self.toolbar.frame.size.width, self.toolbar.frame.size.height)];
     // }
     
-    self.navigationController.navigationBar.translucent = NO;
-    UIImage *image = [UIImage new];
-    self.navigationController.navigationBar.shadowImage = image;
-    [self.navigationController.navigationBar setBackgroundImage:image forBarMetrics:UIBarMetricsDefault];
-    if (_browserOptions.toolbarcolor != nil) {
-        self.navigationController.navigationBar.barTintColor = [self colorFromHexString:_browserOptions.toolbarcolor];
-    }
-    
-    self.navigationController.navigationBar.tintColor = [UIColor whiteColor];
+    // navigationBar button add
     UIBarButtonItem* fixedSpaceButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFixedSpace target:nil action:nil];
     fixedSpaceButton.width = 30;
     
@@ -1255,6 +1261,7 @@ BOOL isExiting = FALSE;
     self.navigationItem.leftBarButtonItems = @[self.closeButton];
     self.navigationItem.rightBarButtonItems = @[self.shareButton, self.forwardButton, fixedSpaceButton, self.backButton];
     
+    // navigationBar label add
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectZero];
     label.textColor = [UIColor colorWithWhite:1.0 alpha:0.45];
     label.userInteractionEnabled = YES;
