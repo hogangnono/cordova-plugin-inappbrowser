@@ -105,6 +105,7 @@ public class InAppBrowser extends CordovaPlugin {
     private static final String CLEAR_ALL_CACHE = "clearcache";
     private static final String CLEAR_SESSION_CACHE = "clearsessioncache";
     private static final String HARDWARE_BACK_BUTTON = "hardwareback";
+    private static final String TRIGGER_BACK_BUTTON = "triggerback";
     private static final String MEDIA_PLAYBACK_REQUIRES_USER_ACTION = "mediaPlaybackRequiresUserAction";
     private static final String INTENT_PROTOCOL_START = "intent:";
     private static final String INTENT_PROTOCOL_INTENT = "#Intent;";
@@ -113,6 +114,7 @@ public class InAppBrowser extends CordovaPlugin {
     private static final String HOGANGNONO_SCHEME = "hogangnono://";
     private static final String SHOULD_PAUSE = "shouldPauseOnSuspend";
     private static final Boolean DEFAULT_HARDWARE_BACK = true;
+    private static final Boolean DEFAULT_TRIGGER_BACK = false;
     private static final String USER_WIDE_VIEW_PORT = "useWideViewPort";
     private static final String TOOLBAR_COLOR = "toolbarcolor";
     private static final String CLOSE_BUTTON_CAPTION = "closebuttoncaption";
@@ -140,6 +142,7 @@ public class InAppBrowser extends CordovaPlugin {
     private boolean clearAllCache = false;
     private boolean clearSessionCache = false;
     private boolean hadwareBackButton = true;
+    private boolean triggerBackButton = false;
     private boolean mediaPlaybackRequiresUserGesture = false;
     private boolean shouldPauseInAppBrowser = false;
     private boolean useWideViewPort = true;
@@ -590,6 +593,21 @@ public class InAppBrowser extends CordovaPlugin {
     }
 
     /**
+     * Hogangnono - Has the user set the trigger back button to go back
+     * @return boolean
+     */
+    public boolean isTriggerBack() {
+        return triggerBackButton;
+    }
+
+    /**
+     * Hogangnono - Execute javaScript for triggering back button
+     */
+    public void triggerBackButton() {
+        this.inAppWebView.loadUrl("javascript:backbutton()");
+    }
+
+    /**
      * Checks to see if it is possible to go forward one page in history, then does so.
      */
     private void goForward() {
@@ -666,6 +684,12 @@ public class InAppBrowser extends CordovaPlugin {
                 hadwareBackButton = hardwareBack.equals("yes") ? true : false;
             } else {
                 hadwareBackButton = DEFAULT_HARDWARE_BACK;
+            }
+            String triggerBack = features.get(TRIGGER_BACK_BUTTON);
+            if (triggerBack != null) {
+                triggerBackButton = triggerBack.equals("yes") ? true : false;
+            } else {
+                triggerBackButton = DEFAULT_TRIGGER_BACK;
             }
             String mediaPlayback = features.get(MEDIA_PLAYBACK_REQUIRES_USER_ACTION);
             if (mediaPlayback != null) {
