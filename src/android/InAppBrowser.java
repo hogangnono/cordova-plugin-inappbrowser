@@ -604,7 +604,7 @@ public class InAppBrowser extends CordovaPlugin {
      * Hogangnono - Execute javaScript for triggering back button
      */
     public void triggerBackButton() {
-        this.inAppWebView.loadUrl("javascript:backbutton()");
+        this.inAppWebView.loadUrl("javascript:window.backbutton && window.backbutton()");
     }
 
     /**
