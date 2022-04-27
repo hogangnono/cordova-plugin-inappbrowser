@@ -1159,7 +1159,7 @@ BOOL isExiting = FALSE;
 }
 
 - (BOOL)prefersStatusBarHidden {
-    return YES;
+    return _browserOptions.fullscreen == YES ? YES : NO;
 }
 
 - (void)close
