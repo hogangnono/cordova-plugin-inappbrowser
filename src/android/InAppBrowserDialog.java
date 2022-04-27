@@ -50,7 +50,12 @@ public class InAppBrowserDialog extends Dialog {
             if (this.inAppBrowser.hardwareBack() && this.inAppBrowser.canGoBack()) {
                 this.inAppBrowser.goBack();
             }  else {
-                this.inAppBrowser.closeDialog();
+                // Hogangnono - triggerback 옵션이 설정되어 있으면, 웹뷰를 닫지 않고 웹으로 backbutton 함수를 실행시킨다
+                if (this.inAppBrowser.isTriggerBack()) {
+                    this.inAppBrowser.triggerBackButton();
+                } else {
+                    this.inAppBrowser.closeDialog();
+                }
             }
         }
     }
