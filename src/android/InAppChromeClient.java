@@ -25,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import android.annotation.TargetApi;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Message;
 import android.webkit.JsPromptResult;
@@ -131,7 +132,7 @@ public class InAppChromeClient extends WebChromeClient {
             }
             else {
                 // Anything else with a gap: prefix should get this message
-                LOG.w(LOG_TAG, "InAppBrowser does not support Cordova API calls: " + url + " " + defaultValue); 
+                LOG.w(LOG_TAG, "InAppBrowser does not support Cordova API calls: " + url + " " + defaultValue);
                 result.cancel();
                 return true;
             }
@@ -178,5 +179,10 @@ public class InAppChromeClient extends WebChromeClient {
         resultMsg.sendToTarget();
 
         return true;
+    }
+
+    @Override
+    public Bitmap getDefaultVideoPoster() {
+        return Bitmap.createBitmap(10, 10, Bitmap.Config.ARGB_8888);
     }
 }
