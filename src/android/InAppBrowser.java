@@ -1180,8 +1180,9 @@ public class InAppBrowser extends CordovaPlugin {
     public void askForPermission(String permission, int requestCode) {
         if (!PermissionHelper.hasPermission(this, permission)) {
             PermissionHelper.requestPermission(this, requestCode, permission);
-        } else {
+        } else if (myRequest != null) {
             myRequest.grant(myRequest.getResources());
+            myRequest = null;
         }
     }
 
@@ -1195,13 +1196,19 @@ public class InAppBrowser extends CordovaPlugin {
     public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) throws JSONException {
         for (int r : grantResults) {
             if (r == PackageManager.PERMISSION_DENIED) {
-                myRequest.deny();
+                if (myRequest != null) {
+                    myRequest.deny();
+                    myRequest = null;
+                }
                 return;
             }
         }
 
         if (requestCode == MY_PERMISSIONS_REQUEST_RECORD_AUDIO || requestCode == MY_PERMISSIONS_REQUEST_CAMERA) {
-            myRequest.grant(myRequest.getResources());
+            if (myRequest != null) {
+                myRequest.grant(myRequest.getResources());
+                myRequest = null;
+            }
         }
     }
 
