@@ -1005,7 +1005,6 @@ public class InAppBrowser extends CordovaPlugin {
                         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
                         String shareBody = inAppWebView.getUrl();
-                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, inAppWebView.getUrl());
                         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
 
                         cordova.getActivity().startActivity(Intent.createChooser(sharingIntent, "URL 공유"));
