@@ -1538,6 +1538,10 @@ public class InAppBrowser extends CordovaPlugin {
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
 
+            if (view.getTitle().equals("")) {
+                view.reload();
+            }
+
             // Set the namespace for postMessage()
             injectDeferredObject("window.webkit={messageHandlers:{cordova_iab:cordova_iab}}", null);
 
