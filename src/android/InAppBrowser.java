@@ -1005,7 +1005,6 @@ public class InAppBrowser extends CordovaPlugin {
                         Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                         sharingIntent.setType("text/plain");
                         String shareBody = inAppWebView.getUrl();
-                        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, inAppWebView.getUrl());
                         sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
 
                         cordova.getActivity().startActivity(Intent.createChooser(sharingIntent, "URL 공유"));
@@ -1538,6 +1537,10 @@ public class InAppBrowser extends CordovaPlugin {
 
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
+
+            if (view.getTitle().equals("")) {
+                view.reload();
+            }
 
             // Set the namespace for postMessage()
             injectDeferredObject("window.webkit={messageHandlers:{cordova_iab:cordova_iab}}", null);
