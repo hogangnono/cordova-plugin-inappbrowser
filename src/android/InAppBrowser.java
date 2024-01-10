@@ -1090,6 +1090,11 @@ public class InAppBrowser extends CordovaPlugin {
 
                 if (overrideUserAgent != null) {
                     settings.setUserAgentString(overrideUserAgent);
+                }else{
+                    //onelink에서 customscheme가 아닌 intent://사용하기 위해서 UA에서 wv를 제거
+                   String ua =  settings.getUserAgentString();
+                   String newUA = ua.replace("; wv","");
+                   settings.setUserAgentString(newUA);
                 }
                 if (appendUserAgent != null) {
                     settings.setUserAgentString(settings.getUserAgentString() + appendUserAgent);
@@ -1412,28 +1417,15 @@ public class InAppBrowser extends CordovaPlugin {
             }
             // Supports Intent:// scheme. It usually used on above 4 version.
             else if (url.startsWith(INTENT_PROTOCOL_START)) {
-                final int customUrlStartIndex = INTENT_PROTOCOL_START.length();
-                final int customUrlEndIndex = url.indexOf(INTENT_PROTOCOL_INTENT);
-
-                if (customUrlEndIndex < 0) {
-                    return false;
-                } else {
-                    final String customUrl = url.substring(customUrlStartIndex, customUrlEndIndex);
-
-                    try {
-                        cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(customUrl)));
-                    } catch (ActivityNotFoundException e) {
-                        if (url.contains("kakaolink://send")) {
-                            cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_STORE_PREFIX + "com.kakao.talk")));
-                            return true;
-                        }
-                        final int packageStartIndex = customUrlEndIndex + INTENT_PROTOCOL_INTENT.length();
-                        final int packageEndIndex = url.indexOf(INTENT_PROTOCOL_END);
-                        final String packageName = url.substring(packageStartIndex, packageEndIndex < 0 ? url.length() : packageEndIndex).replace("package=", "");
-                        cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_STORE_PREFIX + packageName)));
-                    }
-                    return true;
+                // intent:// 실행코드 변경
+                try {
+                    Intent intent =Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+                    Uri uri = Uri.parse(intent.getDataString());
+                    cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                } catch (URISyntaxException e) {
+                    LOG.e(LOG_TAG, e.getLocalizedMessage());
                 }
+                return true;
             }
             // Test for whitelisted custom scheme names like mycoolapp:// or twitteroauthresponse:// (Twitter Oauth Response)
             else if (!url.startsWith("http:") && !url.startsWith("https:") && url.matches("^[A-Za-z0-9+.-]*://.*?$")) {
