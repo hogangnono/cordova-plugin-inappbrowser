@@ -1422,8 +1422,8 @@ public class InAppBrowser extends CordovaPlugin {
                     Intent intent =Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
                     Uri uri = Uri.parse(intent.getDataString());
                     cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                } catch (URISyntaxException e) {
-                    LOG.e(LOG_TAG, e.getLocalizedMessage());
+                } catch(Exception e) {
+                    LOG.e(LOG_TAG, "Error Start Intent " + url + ": " + e.toString());
                 }
                 return true;
             }
