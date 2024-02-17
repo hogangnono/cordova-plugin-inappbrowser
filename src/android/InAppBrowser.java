@@ -1424,11 +1424,20 @@ public class InAppBrowser extends CordovaPlugin {
             else if (url.startsWith(INTENT_PROTOCOL_START)) {
                 // intent:// 실행코드 변경
                 try {
-                    Intent intent =Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
-                    Uri uri = Uri.parse(intent.getDataString());
-                    cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                    Intent intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME);
+                    try {
+                        Uri uri = Uri.parse(intent.getDataString());
+                        cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                    } catch(Exception e) {
+                        LOG.e(LOG_TAG, "Error startActivity Intent " + url + ": " + e.toString());
+                        String fallbackUrl = intent.getStringExtra("browser_fallback_url");
+                        if(fallbackUrl != null) {
+                            LOG.d(LOG_TAG, "FallbackUrl : " + fallbackUrl);
+                            cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(fallbackUrl)));
+                        }
+                    }
                 } catch(Exception e) {
-                    LOG.e(LOG_TAG, "Error Start Intent " + url + ": " + e.toString());
+                    LOG.e(LOG_TAG, "Error parseUri " + url + ": " + e.toString());
                 }
                 return true;
             }
