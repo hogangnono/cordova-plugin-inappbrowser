@@ -380,6 +380,11 @@ public class InAppBrowser extends CordovaPlugin {
         if (shouldPauseInAppBrowser) {
             inAppWebView.onResume();
         }
+
+        // onelink를 통해 이동 후, 앱에 재 진입 시, 기존 페이지로 전환
+        if(edittext.getText().toString().contains("onelink.me")) {
+            goBack();
+        }
     }
 
     /**
