@@ -127,10 +127,11 @@ public class InAppBrowser extends CordovaPlugin {
     private static final String FOOTER_COLOR = "footercolor";
     private static final String BEFORELOAD = "beforeload";
     private static final String FULLSCREEN = "fullscreen";
+    private static final String ALLOWEDSCHEMES = "allowedschemes";
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 101;
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 102;
 
-    private static final List customizableOptions = Arrays.asList(CLOSE_BUTTON_CAPTION, TOOLBAR_COLOR, NAVIGATION_COLOR, CLOSE_BUTTON_COLOR, FOOTER_COLOR);
+    private static final List customizableOptions = Arrays.asList(CLOSE_BUTTON_CAPTION, TOOLBAR_COLOR, NAVIGATION_COLOR, CLOSE_BUTTON_COLOR, FOOTER_COLOR, ALLOWEDSCHEMES);
 
     private InAppBrowserDialog dialog;
     private WebView inAppWebView;
@@ -181,6 +182,11 @@ public class InAppBrowser extends CordovaPlugin {
             }
             final String target = t;
             final HashMap<String, String> features = parseFeature(args.optString(2));
+            final String customscheme = features.get(ALLOWEDSCHEMES);
+            if (customscheme != null) {
+                LOG.d(LOG_TAG, "customscheme = " + customscheme);
+                allowedSchemes = customscheme.split("/");
+            }
 
             LOG.d(LOG_TAG, "target = " + target);
 
@@ -1444,15 +1450,26 @@ public class InAppBrowser extends CordovaPlugin {
             }
             // Test for whitelisted custom scheme names like mycoolapp:// or twitteroauthresponse:// (Twitter Oauth Response)
             else if (!url.startsWith("http:") && !url.startsWith("https:") && url.matches("^[A-Za-z0-9+.-]*://.*?$")) {
-                try {
-                    JSONObject obj = new JSONObject();
-                    obj.put("type", "customscheme");
-                    obj.put("url", url);
-                    sendUpdate(obj, true);
-                    override = true;
-                } catch (JSONException ex) {
-                    LOG.e(LOG_TAG, "Custom Scheme URI passed in has caused a JSON error.");
+                if (allowedSchemes != null) {
+                    for (String scheme : allowedSchemes) {
+                        if (scheme.equals("all") || url.startsWith(scheme)) {
+                            LOG.d(LOG_TAG, "execute deeplink [" + url + "]");
+                            try {
+                                cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                            } catch (ActivityNotFoundException e) {
+                                LOG.e(LOG_TAG, "not installed deeplink app [" + url + "] : " + e.toString());
+                            }
+                            override = true;
+                            break;
+                        }
+                    }
+                    if (!override) {
+                        LOG.e(LOG_TAG, "not allowed this scheme [" + url + "]");
+                    }
+                } else {
+                    LOG.e(LOG_TAG, "no allowedSchemes");
                 }
+                return true;
             }
             if (useBeforeload) {
                 this.waitForBeforeload = true;
