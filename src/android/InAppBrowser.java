@@ -1451,20 +1451,24 @@ public class InAppBrowser extends CordovaPlugin {
             // Test for whitelisted custom scheme names like mycoolapp:// or twitteroauthresponse:// (Twitter Oauth Response)
             else if (!url.startsWith("http:") && !url.startsWith("https:") && url.matches("^[A-Za-z0-9+.-]*://.*?$")) {
                 if (allowedSchemes != null) {
-                    for (String scheme : allowedSchemes) {
-                        if (scheme.equals("all") || url.startsWith(scheme)) {
-                            LOG.d(LOG_TAG, "execute deeplink [" + url + "]");
-                            try {
-                                cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                            } catch (ActivityNotFoundException e) {
-                                LOG.e(LOG_TAG, "not installed deeplink app [" + url + "] : " + e.toString());
+                    try {
+                        for (String scheme : allowedSchemes) {
+                            if (scheme != null && (scheme.equals("all") || url.startsWith(scheme))) {
+                                LOG.d(LOG_TAG, "execute deeplink [" + url + "]");
+                                try {
+                                    cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                                } catch (ActivityNotFoundException e) {
+                                    LOG.e(LOG_TAG, "not installed deeplink app [" + url + "] : " + e.toString());
+                                }
+                                override = true;
+                                break;
                             }
-                            override = true;
-                            break;
                         }
-                    }
-                    if (!override) {
-                        LOG.e(LOG_TAG, "not allowed this scheme [" + url + "]");
+                        if (!override) {
+                            LOG.e(LOG_TAG, "not allowed this scheme [" + url + "]");
+                        }
+                    } catch (NullPointerException e) {
+                        LOG.e(LOG_TAG, "null exception?! : " + e.toString());
                     }
                 } else {
                     LOG.e(LOG_TAG, "no allowedSchemes");
