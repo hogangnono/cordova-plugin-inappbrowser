@@ -1457,8 +1457,14 @@ public class InAppBrowser extends CordovaPlugin {
                                 LOG.d(LOG_TAG, "execute deeplink [" + url + "]");
                                 try {
                                     cordova.getActivity().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                                    JSONObject obj = new JSONObject();
+                                    obj.put("type", "customscheme");
+                                    obj.put("url", url);
+                                    sendUpdate(obj, true);
                                 } catch (ActivityNotFoundException e) {
                                     LOG.e(LOG_TAG, "not installed deeplink app [" + url + "] : " + e.toString());
+                                } catch (JSONException ex) {
+                                    LOG.e(LOG_TAG, "Custom Scheme URI passed in has caused a JSON error.");
                                 }
                                 override = true;
                                 break;
@@ -1468,7 +1474,7 @@ public class InAppBrowser extends CordovaPlugin {
                             LOG.e(LOG_TAG, "not allowed this scheme [" + url + "]");
                         }
                     } catch (NullPointerException e) {
-                        LOG.e(LOG_TAG, "null exception?! : " + e.toString());
+                        LOG.e(LOG_TAG, "scheme is null?! : " + e.toString());
                     }
                 } else {
                     LOG.e(LOG_TAG, "no allowedSchemes");
