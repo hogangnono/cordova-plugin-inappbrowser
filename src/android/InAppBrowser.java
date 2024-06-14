@@ -556,8 +556,12 @@ public class InAppBrowser extends CordovaPlugin {
                 childView.setWebViewClient(new WebViewClient() {
                     // NB: wait for about:blank before dismissing
                     public void onPageFinished(WebView view, String url) {
-                        if (dialog != null && !cordova.getActivity().isFinishing()) {
-                            dialog.dismiss();
+                        if (dialog != null && dialog.isShowing() && !cordova.getActivity().isFinishing()) {
+                            try {
+                                dialog.dismiss();
+                            } catch(IllegalArgumentException e) {
+                                LOG.e(LOG_TAG, "Caught exception when trying to close IAB dialog: " + e);
+                            }
                             dialog = null;
                         }
                     }
