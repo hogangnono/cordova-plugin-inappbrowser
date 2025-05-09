@@ -46,7 +46,7 @@
 		NSURL *chromeURL = [NSURL URLWithString:chromeURLString];
 
 		// Open the URL with Chrome.
-		[[UIApplication sharedApplication] open:chromeURL options:@{} completionHandler:nil];
+		[[UIApplication sharedApplication] openURL:chromeURL options:@{} completionHandler:nil];
 	}
 }
 
