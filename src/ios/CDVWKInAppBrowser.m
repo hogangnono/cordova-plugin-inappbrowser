@@ -664,7 +664,7 @@ static CDVWKInAppBrowser* instance = nil;
     if (error.code == NSURLErrorUnsupportedURL && error.userInfo[NSURLErrorFailingURLStringErrorKey]) {
         NSURL *url = [NSURL URLWithString:error.userInfo[NSURLErrorFailingURLStringErrorKey]];
         if (url) {
-            [[UIApplication sharedApplication] open:url options:@{} completionHandler:^(BOOL success) {
+            [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
                 if(success) {
                     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK];
                     [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackId];
