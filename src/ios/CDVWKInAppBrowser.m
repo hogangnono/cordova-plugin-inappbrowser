@@ -553,6 +553,20 @@ static CDVWKInAppBrowser* instance = nil;
         [self openInSystem:url];
         shouldStart = NO;
     }
+    // Handle custom URL schemes (payment apps, etc.)
+    else if (![[url scheme] isEqualToString:@"http"] &&
+             ![[url scheme] isEqualToString:@"https"] &&
+             ![[url scheme] isEqualToString:@"about"] &&
+             ![[url scheme] isEqualToString:@"data"] &&
+             ![[url scheme] isEqualToString:@"blob"]) {
+        [theWebView stopLoading];
+        [[UIApplication sharedApplication] openURL:url options:@{} completionHandler:^(BOOL success) {
+            if (!success) {
+                NSLog(@"[IAB] Failed to open URL scheme: %@", [url scheme]);
+            }
+        }];
+        shouldStart = NO;
+    }
     else if ((self.callbackId != nil) && isTopLevelNavigation) {
         // Send a loadstart event for each top-level navigation (includes redirects).
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
