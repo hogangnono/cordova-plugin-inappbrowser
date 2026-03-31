@@ -1151,10 +1151,14 @@ BOOL isExiting = FALSE;
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    NSString* statusBarStylePreference = [self settingForKey:@"InAppBrowserStatusBarStyle"];
-    if (statusBarStylePreference && [statusBarStylePreference isEqualToString:@"lightcontent"]) {
+    // Per-open-call option takes priority over config.xml
+    NSString* style = _browserOptions.statusbarstyle
+        ? [_browserOptions.statusbarstyle lowercaseString]
+        : [self settingForKey:@"InAppBrowserStatusBarStyle"];
+
+    if ([style isEqualToString:@"lightcontent"]) {
         return UIStatusBarStyleLightContent;
-    } else if (statusBarStylePreference && [statusBarStylePreference isEqualToString:@"darkcontent"]) {
+    } else if ([style isEqualToString:@"darkcontent"]) {
         if (@available(iOS 13.0, *)) {
             return UIStatusBarStyleDarkContent;
         } else {
