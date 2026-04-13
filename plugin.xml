@@ -20,7 +20,7 @@
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
            id="cordova-plugin-inappbrowser"
-      version="5.0.24-hogangnono-dev">
+      version="5.0.26-hogangnono">
 
     <name>InAppBrowser</name>
     <description>Cordova InAppBrowser Plugin</description>
@@ -44,6 +44,58 @@
             <feature name="InAppBrowser">
                 <param name="android-package" value="org.apache.cordova.inappbrowser.InAppBrowser"/>
             </feature>
+        </config-file>
+
+        <config-file parent="/manifest" target="AndroidManifest.xml">
+            <queries>
+                <!-- PortOne 결제 앱 패키지 (전체 목록) -->
+                <package android:name="com.kftc.bankpay.android" />
+                <package android:name="com.nhnent.payapp" />
+                <package android:name="com.lottemembers.android" />
+                <package android:name="com.ssg.serviceapp.android.egiftcertificate" />
+                <package android:name="com.inicis.kpay" />
+                <package android:name="com.tmoney.tmpay" />
+                <package android:name="viva.republica.toss" />
+                <package android:name="com.samsung.android.spay" />
+                <package android:name="com.kakao.talk" />
+                <package android:name="com.nhn.android.search" />
+                <package android:name="com.mysmilepay.app" />
+                <package android:name="kvp.jjy.MispAndroid320" />
+                <package android:name="com.kbcard.cxh.appcard" />
+                <package android:name="com.kbstar.reboot" />
+                <package android:name="com.kbstar.kbbank" />
+                <package android:name="com.samsung.android.spaylite" />
+                <package android:name="com.lge.lgpay" />
+                <package android:name="com.hanaskcard.paycla" />
+                <package android:name="kr.co.hanamembers.hmscustomer" />
+                <package android:name="com.hanaskcard.rocomo.potal" />
+                <package android:name="kr.co.citibank.citimobile" />
+                <package android:name="com.lcacApp" />
+                <package android:name="kr.co.samsungcard.mpocket" />
+                <package android:name="com.shcard.smartpay" />
+                <package android:name="com.shinhancard.smartshinhan" />
+                <package android:name="com.shinhan.smartcaremgr" />
+                <package android:name="com.hyundaicard.appcard" />
+                <package android:name="nh.smart.nhallonepay" />
+                <package android:name="nh.smart.card" />
+                <package android:name="net.ib.android.smcard" />
+                <package android:name="com.wooricard.smartapp" />
+                <package android:name="com.wooribank.smart.npib" />
+                <package android:name="com.TouchEn.mVaccine.webs" />
+                <package android:name="com.ahnlab.v3mobileplus" />
+                <package android:name="kr.co.shiftworks.vguardweb" />
+                <package android:name="com.lumensoft.touchenappfree" />
+                <package android:name="kr.co.kfcc.mobilebank" />
+                <package android:name="com.nh.cashcardapp" />
+                <package android:name="com.knb.psb" />
+                <package android:name="com.lguplus.paynow" />
+                <package android:name="com.kbankwith.smartbank" />
+                <package android:name="com.eg.android.AlipayGphone" />
+                <package android:name="com.sktelecom.tauth" />
+                <package android:name="com.lguplus.smartotp" />
+                <package android:name="com.kt.ktauth" />
+                <package android:name="kr.danal.app.damoum" />
+            </queries>
         </config-file>
 
         <source-file src="src/android/InAppBrowser.java" target-dir="src/org/apache/cordova/inappbrowser" />
@@ -95,6 +147,59 @@
         <config-file target="*-Info.plist" parent="LSApplicationQueriesSchemes">
             <array>
                 <string>googlechrome</string>
+                <!-- PortOne 결제 앱 스킴 (전체 목록) -->
+                <string>kftc-bankpay</string>
+                <string>ispmobile</string>
+                <string>hdcardappcardansimclick</string>
+                <string>smhyundaiansimclick</string>
+                <string>hyundaicardappcardid</string>
+                <string>shinhan-sr-ansimclick</string>
+                <string>shinhan-sr-ansimclick-naverpay</string>
+                <string>shinhan-sr-ansimclick-payco</string>
+                <string>shinhan-sr-ansimclick-lpay</string>
+                <string>shinhan-sr-ansimclick-mola</string>
+                <string>smshinhanansimclick</string>
+                <string>smailapp</string>
+                <string>kb-acp</string>
+                <string>kb-auth</string>
+                <string>kb-screen</string>
+                <string>kbbank</string>
+                <string>liivbank</string>
+                <string>newliiv</string>
+                <string>mpocket.online.ansimclick</string>
+                <string>ansimclickscard</string>
+                <string>ansimclickipcollect</string>
+                <string>vguardstart</string>
+                <string>samsungpay</string>
+                <string>scardcertiapp</string>
+                <string>monimopay</string>
+                <string>monimopayauth</string>
+                <string>lottesmartpay</string>
+                <string>lotteappcard</string>
+                <string>lmslpay</string>
+                <string>lpayapp</string>
+                <string>cloudpay</string>
+                <string>hanawalletmembers</string>
+                <string>nhappcardansimclick</string>
+                <string>nonghyupcardansimclick</string>
+                <string>nhallonepayansimclick</string>
+                <string>citispay</string>
+                <string>citicardappkr</string>
+                <string>citimobileapp</string>
+                <string>kakaotalk</string>
+                <string>payco</string>
+                <string>com.wooricard.wcard</string>
+                <string>newsmartpib</string>
+                <string>supertoss</string>
+                <string>naversearchthirdlogin</string>
+                <string>kakaobank</string>
+                <string>v3mobileplusweb</string>
+                <string>line</string>
+                <string>alipays</string>
+                <string>weixin</string>
+                <string>tauthlink</string>
+                <string>ktauthexternalcall</string>
+                <string>upluscorporation</string>
             </array>
         </config-file>
         <header-file src="src/ios/CDVInAppBrowserOptions.h" />

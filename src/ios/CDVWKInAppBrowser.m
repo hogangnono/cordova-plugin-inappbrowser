@@ -553,6 +553,12 @@ static CDVWKInAppBrowser* instance = nil;
         [self openInSystem:url];
         shouldStart = NO;
     }
+    // Handle custom URL schemes (payment apps, etc.)
+    else if (![@[@"http", @"https", @"about", @"data", @"blob"] containsObject:[url scheme]]) {
+        [theWebView stopLoading];
+        [self openInSystem:url];
+        shouldStart = NO;
+    }
     else if ((self.callbackId != nil) && isTopLevelNavigation) {
         // Send a loadstart event for each top-level navigation (includes redirects).
         CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK
