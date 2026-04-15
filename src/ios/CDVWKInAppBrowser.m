@@ -833,7 +833,16 @@ BOOL isExiting = FALSE;
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
    if (@available(iOS 11.0, *)) {
-       [self.webView.scrollView setContentInsetAdjustmentBehavior:UIScrollViewContentInsetAdjustmentNever];
+       UIScrollViewContentInsetAdjustmentBehavior behavior = UIScrollViewContentInsetAdjustmentNever;
+       NSString* behaviorOption = [_browserOptions.contentinsetadjustmentbehavior lowercaseString];
+       if ([behaviorOption isEqualToString:@"automatic"]) {
+           behavior = UIScrollViewContentInsetAdjustmentAutomatic;
+       } else if ([behaviorOption isEqualToString:@"scrollableaxes"]) {
+           behavior = UIScrollViewContentInsetAdjustmentScrollableAxes;
+       } else if ([behaviorOption isEqualToString:@"always"]) {
+           behavior = UIScrollViewContentInsetAdjustmentAlways;
+       }
+       [self.webView.scrollView setContentInsetAdjustmentBehavior:behavior];
    }
 #endif
 
