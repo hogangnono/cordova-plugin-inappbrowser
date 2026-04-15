@@ -43,6 +43,7 @@
 @property (nonatomic, assign) BOOL allowinlinemediaplayback;
 @property (nonatomic, assign) BOOL hidden;
 @property (nonatomic, assign) BOOL disallowoverscroll;
+@property (nonatomic, copy) NSString* contentinsetadjustmentbehavior;
 @property (nonatomic, copy) NSString* beforeload;
 @property (nonatomic, assign) BOOL fullscreen;
 @property (nonatomic, copy) NSString* statusbarstyle;

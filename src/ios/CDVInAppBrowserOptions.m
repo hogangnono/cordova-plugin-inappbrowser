@@ -39,6 +39,7 @@
         self.allowinlinemediaplayback = NO;
         self.hidden = NO;
         self.disallowoverscroll = NO;
+        self.contentinsetadjustmentbehavior = @"never";
         self.hidenavigationbuttons = NO;
         self.closebuttoncolor = nil;
         self.lefttoright = false;
