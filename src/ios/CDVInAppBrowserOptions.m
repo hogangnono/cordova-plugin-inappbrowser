@@ -46,6 +46,7 @@
         self.toolbartranslucent = YES;
         self.beforeload = @"";
         self.fullscreen = YES;
+        self.statusbarstyle = nil;
     }
 
     return self;
