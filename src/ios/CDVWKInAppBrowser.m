@@ -395,6 +395,18 @@ static CDVWKInAppBrowser* instance = nil;
     [self.inAppBrowserViewController navigateTo:url];
 }
 
+- (void)setContentInsetAdjustmentBehavior:(CDVInvokedUrlCommand*)command
+{
+    if (self.inAppBrowserViewController == nil) {
+        NSLog(@"Tried to set contentInsetAdjustmentBehavior on IAB after it was closed.");
+        return;
+    }
+    NSString* value = [command argumentAtIndex:0];
+    if (@available(iOS 11.0, *)) {
+        [self.inAppBrowserViewController applyContentInsetAdjustmentBehavior:value];
+    }
+}
+
 // This is a helper method for the inject{Script|Style}{Code|File} API calls, which
 // provides a consistent method for injecting JavaScript code into the document.
 //
@@ -833,16 +845,7 @@ BOOL isExiting = FALSE;
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 110000
    if (@available(iOS 11.0, *)) {
-       UIScrollViewContentInsetAdjustmentBehavior behavior = UIScrollViewContentInsetAdjustmentNever;
-       NSString* behaviorOption = [_browserOptions.contentinsetadjustmentbehavior lowercaseString];
-       if ([behaviorOption isEqualToString:@"automatic"]) {
-           behavior = UIScrollViewContentInsetAdjustmentAutomatic;
-       } else if ([behaviorOption isEqualToString:@"scrollableaxes"]) {
-           behavior = UIScrollViewContentInsetAdjustmentScrollableAxes;
-       } else if ([behaviorOption isEqualToString:@"always"]) {
-           behavior = UIScrollViewContentInsetAdjustmentAlways;
-       }
-       [self.webView.scrollView setContentInsetAdjustmentBehavior:behavior];
+       [self applyContentInsetAdjustmentBehavior:_browserOptions.contentinsetadjustmentbehavior];
    }
 #endif
 
@@ -1232,6 +1235,22 @@ BOOL isExiting = FALSE;
     } else {
         NSURLRequest* request = [NSURLRequest requestWithURL:url];
         [self.webView loadRequest:request];
+    }
+}
+
+- (void)applyContentInsetAdjustmentBehavior:(NSString*)value
+{
+    if (@available(iOS 11.0, *)) {
+        UIScrollViewContentInsetAdjustmentBehavior behavior = UIScrollViewContentInsetAdjustmentNever;
+        NSString* lc = [value lowercaseString];
+        if ([lc isEqualToString:@"automatic"]) {
+            behavior = UIScrollViewContentInsetAdjustmentAutomatic;
+        } else if ([lc isEqualToString:@"scrollableaxes"]) {
+            behavior = UIScrollViewContentInsetAdjustmentScrollableAxes;
+        } else if ([lc isEqualToString:@"always"]) {
+            behavior = UIScrollViewContentInsetAdjustmentAlways;
+        }
+        [self.webView.scrollView setContentInsetAdjustmentBehavior:behavior];
     }
 }
 

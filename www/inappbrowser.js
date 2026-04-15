@@ -89,6 +89,14 @@
             } else {
                 throw new Error('insertCSS requires exactly one of code or file to be specified');
             }
+        },
+
+        /**
+         * iOS 전용. WKWebView scrollView의 contentInsetAdjustmentBehavior를 런타임에 변경.
+         * @param {'automatic' | 'scrollableAxes' | 'never' | 'always'} value
+         */
+        setContentInsetAdjustmentBehavior: function (value) {
+            exec(null, null, 'InAppBrowser', 'setContentInsetAdjustmentBehavior', [value]);
         }
     };
 

@@ -83,6 +83,11 @@ interface InAppBrowser {
      * @param callback  The function that executes after the CSS is injected.
      */
     insertCSS(css: { code: string } | { file: string }, callback: () => void): void;
+    /**
+     * iOS only. Updates the WKWebView scrollView's contentInsetAdjustmentBehavior at runtime.
+     * @param value  'automatic' | 'scrollableAxes' | 'never' | 'always'
+     */
+    setContentInsetAdjustmentBehavior(value: 'automatic' | 'scrollableAxes' | 'never' | 'always'): void;
 }
 
 type InAppBrowserEventListenerOrEventListenerObject = InAppBrowserEventListener | InAppBrowserEventListenerObject;

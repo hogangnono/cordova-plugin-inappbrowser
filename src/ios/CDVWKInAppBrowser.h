@@ -46,6 +46,7 @@
 - (void)show:(CDVInvokedUrlCommand*)command;
 - (void)hide:(CDVInvokedUrlCommand*)command;
 - (void)loadAfterBeforeload:(CDVInvokedUrlCommand*)command;
+- (void)setContentInsetAdjustmentBehavior:(CDVInvokedUrlCommand*)command;
 
 @end
 
@@ -72,6 +73,7 @@
 
 - (void)close;
 - (void)navigateTo:(NSURL*)url;
+- (void)applyContentInsetAdjustmentBehavior:(NSString*)value API_AVAILABLE(ios(11.0));
 // - (void)showLocationBar:(BOOL)show;
 // - (void)showToolBar:(BOOL)show : (NSString *) toolbarPosition;
 - (void)setCloseButtonTitle:(NSString*)title : (NSString*) colorString : (int) buttonIndex;
