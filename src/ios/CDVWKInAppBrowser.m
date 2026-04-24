@@ -821,6 +821,12 @@ BOOL isExiting = FALSE;
 
     self.webView = [[WKWebView alloc] initWithFrame:webViewBounds configuration:configuration];
 
+#if defined(DEBUG) && __IPHONE_OS_VERSION_MAX_ALLOWED >= 160400
+    if (@available(iOS 16.4, *)) {
+        self.webView.inspectable = YES;
+    }
+#endif
+
     [self.view addSubview:self.webView];
     [self.view sendSubviewToBack:self.webView];
 
