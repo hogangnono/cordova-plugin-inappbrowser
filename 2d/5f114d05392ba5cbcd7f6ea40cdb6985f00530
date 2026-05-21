@@ -1,0 +1,26 @@
+package.json
+  s_4582ebd01b7049::t_0b2e98b41f7435 3
+plugin.xml
+  s_4582ebd01b7049::t_7f7c0e332ee051 23
+src/ios/CDVWKInAppBrowser.m
+  s_4582ebd01b7049::t_cd774bb9e9e951 1164-1167,1169-1184
+  s_4582ebd01b7049::t_7a9621fe0c24b4 837
+  s_4582ebd01b7049::t_861adce6a772dc 838-839
+  s_4582ebd01b7049::t_89f72f4e62c5f0 1168
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "2d5f114d05392ba5cbcd7f6ea40cdb6985f00530",
+  "prompts": {},
+  "sessions": {
+    "s_4582ebd01b7049": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52aacd27-88dd-4ce4-882e-55486b2e5b13",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "heath-song <heath@zigbang.com>"
+    }
+  }
+}
