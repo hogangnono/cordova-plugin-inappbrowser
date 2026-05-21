@@ -1,0 +1,21 @@
+plugin.xml
+  s_4582ebd01b7049::t_f101f44fb5db80 23
+package.json
+  s_4582ebd01b7049::t_1424ea1064f0dc 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.4.11",
+  "base_commit_sha": "7311bb0381e6dd835e7af144bdee57b78e8d03d5",
+  "prompts": {},
+  "sessions": {
+    "s_4582ebd01b7049": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "52aacd27-88dd-4ce4-882e-55486b2e5b13",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "heath-song <heath@zigbang.com>"
+    }
+  }
+}
