@@ -834,6 +834,9 @@ BOOL isExiting = FALSE;
     self.webView.navigationDelegate = self;
     self.webView.UIDelegate = self.webViewUIDelegate;
     self.webView.backgroundColor = [UIColor whiteColor];
+    if (![_browserOptions.contentinsetadjustmentbehavior isEqualToString:@"never"]) {
+        self.view.backgroundColor = [UIColor whiteColor];
+    }
     if ([self settingForKey:@"OverrideUserAgent"] != nil) {
         self.webView.customUserAgent = [self settingForKey:@"OverrideUserAgent"];
     }
@@ -1156,6 +1159,27 @@ BOOL isExiting = FALSE;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+}
+
+- (void)viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+
+    if ([_browserOptions.contentinsetadjustmentbehavior isEqualToString:@"never"] || self.webView == nil) {
+        return;
+    }
+
+    if (@available(iOS 11.0, *)) {
+        CGFloat topInset = self.view.safeAreaInsets.top;
+        CGRect bounds = self.view.bounds;
+        CGRect target = CGRectMake(bounds.origin.x,
+                                   bounds.origin.y + topInset,
+                                   bounds.size.width,
+                                   bounds.size.height - topInset);
+        if (!CGRectEqualToRect(self.webView.frame, target)) {
+            self.webView.frame = target;
+        }
+    }
 }
 
 - (void)viewDidDisappear:(BOOL)animated
